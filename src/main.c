@@ -58,14 +58,6 @@ void init_tee(simple_t *simple){
     simple_print(simple);
 }
 
-// sel4utils_process_t start_ta(){
-
-// }
-
-// void send_params(){
-
-// }
-
 
 int main(void)
 {
@@ -94,7 +86,8 @@ int main(void)
     //
     trusted_app_t new_app;
     init_ta(&new_app,&vka,&vspace,APP_IMAGE_NAME);
-    
+    start_ta(&new_app,&vka,&vspace,APP_IMAGE_NAME);
+    call_function(&new_app,&vka,&vspace);
     //
     /*
     sel4utils_process_t new_process;
