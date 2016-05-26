@@ -88,48 +88,7 @@ int main(void)
     init_ta(&new_app,&vka,&vspace,APP_IMAGE_NAME);
     start_ta(&new_app,&vka,&vspace,APP_IMAGE_NAME);
     call_function(&new_app,&vka,&vspace);
-    //
-    /*
-    sel4utils_process_t new_process;
-    error = sel4utils_configure_process(&new_process,&vka,&vspace,APP_PRIORITY,APP_IMAGE_NAME);
-    assert(error == 0 );
-    name_thread(new_process.thread.tcb.cptr,"hello-4: process -2");
-    vka_object_t ep_object = {0};
-    error = vka_alloc_endpoint(&vka, &ep_object);
-    assert(error == 0);
-
-    
-    cspacepath_t ep_cap_path;
-    seL4_CPtr new_ep_cap;
-    vka_cspace_make_path(&vka,ep_object.cptr,&ep_cap_path);
-    
-    new_ep_cap = sel4utils_mint_cap_to_process(&new_process,ep_cap_path,seL4_AllRights,seL4_CapData_Badge_new(EP_BADGE));
-    assert(new_ep_cap != 0);
-    error = sel4utils_spawn_process_v(&new_process,&vka,&vspace,0,NULL,1);
-    assert(error == 0);
-    printf("tee-container: ready steady go\n");
-
-    seL4_Word sender_badge;
-    seL4_MessageInfo_t tag;
-    seL4_Word msg;
-
-    tag = seL4_Recv(ep_cap_path.capPtr,&sender_badge);
-    assert(sender_badge == EP_BADGE );
-    assert(seL4_MessageInfo_get_length(tag) == 1);
-    msg = seL4_GetMR(0);
-    printf("tee-container: got message from %#x from %#x \n",msg,sender_badge );
-
-    seL4_SetMR(0,~msg);
-    assert(sender_badge == EP_BADGE);
-    assert(seL4_MessageInfo_get_length(tag) == 1);
-
-    msg = seL4_GetMR(0);
-    printf("tee-container: got a message %#x from %#x\n", msg, sender_badge);
-
-    seL4_SetMR(0, ~msg);
-
-    seL4_ReplyRecv(ep_cap_path.capPtr,tag,&sender_badge);
-    */
+  
     return 0;
 }
 

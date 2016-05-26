@@ -37,14 +37,13 @@ void start_ta(trusted_app_t *ta,vka_t *vka,vspace_t *vspace,char *app_name){
 }
 
 void call_function(trusted_app_t *ta,vka_t *vka,vspace_t *vspace){
-
-    seL4_Word sender_badge;
     seL4_MessageInfo_t tag;
     seL4_Word msg;
-	tag = seL4_Recv((*ta).ep_cap_path.capPtr,&sender_badge);
-    assert(sender_badge == (*ta).ep_id );
-    assert(seL4_MessageInfo_get_length(tag) == 1);
+    tag = seL4_MessageInfo_new(0, 0, 0, 1);
+    seL4_SetMR(0, 7);
+    seL4_Call((*ta).ep_cap_path.capPtr,tag);
+	assert(seL4_MessageInfo_get_length(tag) == 1);
     msg = seL4_GetMR(0);
-    printf("tee-container: got message from %#x from %#x \n",msg,sender_badge );
+    printf("returned value is %d \n",msg );
 
 }
