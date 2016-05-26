@@ -36,13 +36,14 @@ void start_ta(trusted_app_t *ta,vka_t *vka,vspace_t *vspace,char *app_name){
     assert(error == 0);
 }
 
-void call_function(trusted_app_t *ta,vka_t *vka,vspace_t *vspace){
+void call_function(trusted_app_t *ta,int param,int function){
     seL4_MessageInfo_t tag;
     seL4_Word msg;
-    tag = seL4_MessageInfo_new(0, 0, 0, 1);
-    seL4_SetMR(0, 7);
+    tag = seL4_MessageInfo_new(0, 0, 0, 2);
+    seL4_SetMR(0, param);
+    seL4_SetMR(1,function);
     seL4_Call((*ta).ep_cap_path.capPtr,tag);
-	assert(seL4_MessageInfo_get_length(tag) == 1);
+	// assert(seL4_MessageInfo_get_length(tag) == 1);
     msg = seL4_GetMR(0);
     printf("returned value is %d \n",msg );
 

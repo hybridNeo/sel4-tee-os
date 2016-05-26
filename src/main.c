@@ -29,10 +29,10 @@
 
 /* constants */
 #define EP_BADGE 0x61 
-#define MSG_DATA 0x6161 
 
 #define APP_PRIORITY seL4_MaxPrio
 #define APP_IMAGE_NAME "hello-4-app"
+#define HELLO_TA_INCREMENT 1
 
 /* global environment variables */
 seL4_BootInfo *info;
@@ -83,11 +83,10 @@ int main(void)
     bootstrap_configure_virtual_pool(allocman, vaddr,
         ALLOCATOR_VIRTUAL_POOL_SIZE, simple_get_pd(&simple));
 
-    //
     trusted_app_t new_app;
     init_ta(&new_app,&vka,&vspace,APP_IMAGE_NAME);
     start_ta(&new_app,&vka,&vspace,APP_IMAGE_NAME);
-    call_function(&new_app,&vka,&vspace);
+    call_function(&new_app,6,HELLO_TA_INCREMENT);
   
     return 0;
 }

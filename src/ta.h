@@ -34,4 +34,4 @@ typedef struct{
 extern void name_thread(seL4_CPtr tcb, char *name);
 void init_ta(trusted_app_t *ta,vka_t *vka,vspace_t *vspace,char *app_name);
 void start_ta(trusted_app_t *ta,vka_t *vka,vspace_t *vspace,char *app_name);
-void call_function(trusted_app_t *ta,vka_t *vka,vspace_t *vspace);
+void call_function(trusted_app_t *ta,int param,int function);
