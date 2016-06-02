@@ -87,6 +87,8 @@ int main(void)
     init_ta(&new_app,&vka,&vspace,APP_IMAGE_NAME);
     start_ta(&new_app,&vka,&vspace,APP_IMAGE_NAME);
     call_function(&new_app,6,HELLO_TA_INCREMENT);
+    //Only single function call works
+    //call_function(&new_app,5,HELLO_TA_INCREMENT);
   
     return 0;
 }

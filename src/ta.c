@@ -42,7 +42,9 @@ void call_function(trusted_app_t *ta,int param,int function){
     tag = seL4_MessageInfo_new(0, 0, 0, 2);
     seL4_SetMR(0, param);
     seL4_SetMR(1,function);
+    printf("Calling \n");
     seL4_Call((*ta).ep_cap_path.capPtr,tag);
+	
 	// assert(seL4_MessageInfo_get_length(tag) == 1);
     msg = seL4_GetMR(0);
     printf("returned value is %d \n",msg );
