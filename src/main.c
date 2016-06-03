@@ -2,29 +2,7 @@
  *  @Author : Rahul Mahadev (hybridNeo)
  *  Starting point for tee-os
  */
-
-#include <autoconf.h>
-
-#include <stdio.h>
-#include <assert.h>
-
-#include <sel4/sel4.h>
-
-#include <simple/simple.h>
-#include <simple-default/simple-default.h>
-
-#include <vka/object.h>
-
-#include <allocman/allocman.h>
-#include <allocman/bootstrap.h>
-#include <allocman/vka.h>
-
-#include <vspace/vspace.h>
-
-#include <sel4utils/vspace.h>
-#include <sel4utils/mapping.h>
-#include <sel4utils/process.h>
-
+#include "tee.h"
 #include "ta.h"
 
 /* constants */
@@ -58,34 +36,47 @@ void init_tee(simple_t *simple){
     simple_print(simple);
 }
 
+void get_allocators(allocman_t *allocman,vspace_t *vspace,vka_t *vka,simple_t *simple){
+    UNUSED int error;
+    allocman = bootstrap_use_current_simple(simple, ALLOCATOR_STATIC_POOL_SIZE,
+        allocator_mem_pool);
+    assert(allocman);
+    allocman_make_vka(vka, allocman);
+    
+    error = sel4utils_bootstrap_vspace_with_bootinfo_leaky(vspace,&data,simple_get_pd(simple),vka,info);
+    void *vaddr;
+    UNUSED reservation_t virtual_reservation;
+    virtual_reservation = vspace_reserve_range(vspace,
+        ALLOCATOR_VIRTUAL_POOL_SIZE, seL4_AllRights, 1, &vaddr);
+    assert(virtual_reservation.res);
+    bootstrap_configure_virtual_pool(allocman, vaddr,
+        ALLOCATOR_VIRTUAL_POOL_SIZE, simple_get_pd(simple));
+
+}
+
 
 int main(void)
 {
     UNUSED int error;
     simple_t simple;
     vka_t vka;
-    allocman_t *allocman;
+    allocman_t *allocman = NULL;
     vspace_t vspace;
     
     init_tee(&simple);
 
-    allocman = bootstrap_use_current_simple(&simple, ALLOCATOR_STATIC_POOL_SIZE,
-        allocator_mem_pool);
-    assert(allocman);
-    allocman_make_vka(&vka, allocman);
-    
-    error = sel4utils_bootstrap_vspace_with_bootinfo_leaky(&vspace,&data,simple_get_pd(&simple),&vka,info);
-    void *vaddr;
-    UNUSED reservation_t virtual_reservation;
-    virtual_reservation = vspace_reserve_range(&vspace,
-        ALLOCATOR_VIRTUAL_POOL_SIZE, seL4_AllRights, 1, &vaddr);
-    assert(virtual_reservation.res);
-    bootstrap_configure_virtual_pool(allocman, vaddr,
-        ALLOCATOR_VIRTUAL_POOL_SIZE, simple_get_pd(&simple));
+    get_allocators(allocman,&vspace,&vka,&simple);
+    //new vspace
+    vspace_t ta_vspace;
+    UNUSED static sel4utils_alloc_data_t ta_vs_data;
+    void *existing_frames = {NULL};
 
+    error = sel4utils_bootstrap_vspace(&ta_vspace,&ta_vs_data,simple_get_pd(&simple),&vka,NULL,NULL,existing_frames);
+    
+    //
     trusted_app_t new_app;
     init_ta(&new_app,&vka,&vspace,APP_IMAGE_NAME);
-    start_ta(&new_app,&vka,&vspace,APP_IMAGE_NAME);
+    start_ta(&new_app,&vka,&ta_vspace,APP_IMAGE_NAME);
     call_function(&new_app,6,HELLO_TA_INCREMENT);
     //Only single function call works
     //call_function(&new_app,5,HELLO_TA_INCREMENT);
