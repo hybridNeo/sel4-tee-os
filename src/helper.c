@@ -1,11 +1,14 @@
+/*
+ *	@Author : Rahul Mahadev (hybridNeo)
+ *  
+ */
 #include "helper.h"
 
 extern void name_thread(seL4_CPtr tcb, char *name);
 
-#define ALLOCATOR_STATIC_POOL_SIZE ((1 << seL4_PageBits) * 10)
 UNUSED static char allocator_mem_pool[ALLOCATOR_STATIC_POOL_SIZE];
 
-#define ALLOCATOR_VIRTUAL_POOL_SIZE ((1 << seL4_PageBits) * 100)
+
 
 UNUSED static sel4utils_alloc_data_t data;
 void init_tee(simple_t *simple,seL4_BootInfo *info){
