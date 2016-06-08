@@ -20,6 +20,8 @@
 #include <sel4utils/mapping.h>
 #include <sel4utils/process.h>
 
+#define MSG_END 1
+#define MSG_LEFT 0
 /*
  *	Object to hold information about the trusted application
  */

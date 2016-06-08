@@ -7,7 +7,7 @@
 #include "helper.h"
 
 /* constants */
-#define EP_BADGE 0x61 
+
 
 #define APP_PRIORITY seL4_MaxPrio
 #define APP_IMAGE_NAME "hello-4-app"

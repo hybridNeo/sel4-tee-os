@@ -36,17 +36,45 @@ void start_ta(trusted_app_t *ta,vka_t *vka,vspace_t *vspace,char *app_name){
     assert(error == 0);
 }
 
+/*
+ *	Syscall param-interface for calling TA
+ * 	reg 1 - integer parameter
+ * 	reg 2 -	function name
+ *	reg 3 - length of buffer
+ * 	reg 4-maxLength - buffer
+ *	
+ */
 void call_function(trusted_app_t *ta,int param,int function){
-    seL4_MessageInfo_t tag;
-    seL4_Word msg;
-    tag = seL4_MessageInfo_new(0, 0, 0, 2);
-    seL4_SetMR(0, param);
-    seL4_SetMR(1,function);
-    printf("Calling \n");
-    seL4_Call((*ta).ep_cap_path.capPtr,tag);
-	
-	// assert(seL4_MessageInfo_get_length(tag) == 1);
-    msg = seL4_GetMR(0);
-    printf("returned value is %d \n",msg );
+    //sample structure to send
+    int data[5] = {23,41,56,723,21};
+    size_t obj_size = sizeof(int) * 5;
+    printf("size is %d  %d \n",obj_size,data[1]); 
+    int length = obj_size/(double)sizeof(seL4_Word);
+    printf("%d length\n", length);
+    if((length+3) > seL4_MsgMaxLength){
+    	printf("Params too large. operation failed\n");
+    }else{
+    	seL4_MessageInfo_t tag;
+	    seL4_Word msg;
+	    tag = seL4_MessageInfo_new(0, 0, 0, 3+length);
+	   	seL4_Word* blockptr = (seL4_Word*)data;
+	    seL4_SetMR(0, param);
+	    seL4_SetMR(1,function);
+	    seL4_SetMR(2,length);
+	    for(int i =0 ; i < length;++i){
+	    	seL4_SetMR(i+3,*blockptr);
+	    	blockptr++;
+	    }
+
+	    // seL4_SetMR(length+3,MSG_END);
+	    seL4_Call((*ta).ep_cap_path.capPtr,tag);
+		printf("%d \n",seL4_MsgMaxLength * sizeof(int) );
+		// assert(seL4_MessageInfo_get_length(tag) == 1);
+	    msg = seL4_GetMR(0);
+	    printf("returned value is %d \n",msg );	
+	}
+
+    
 
 }
+
