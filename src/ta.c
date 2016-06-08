@@ -42,15 +42,10 @@ void start_ta(trusted_app_t *ta,vka_t *vka,vspace_t *vspace,char *app_name){
  * 	reg 2 -	function name
  *	reg 3 - length of buffer
  * 	reg 4-maxLength - buffer
- *	
+ *	Single call only
  */
-void call_function(trusted_app_t *ta,int param,int function){
-    //sample structure to send
-    int data[5] = {23,41,56,723,21};
-    size_t obj_size = sizeof(int) * 5;
-    printf("size is %d  %d \n",obj_size,data[1]); 
+void call_function(trusted_app_t *ta,int param,int function,void *data,size_t obj_size){
     int length = obj_size/(double)sizeof(seL4_Word);
-    printf("%d length\n", length);
     if((length+3) > seL4_MsgMaxLength){
     	printf("Params too large. operation failed\n");
     }else{
@@ -65,10 +60,8 @@ void call_function(trusted_app_t *ta,int param,int function){
 	    	seL4_SetMR(i+3,*blockptr);
 	    	blockptr++;
 	    }
-
 	    // seL4_SetMR(length+3,MSG_END);
 	    seL4_Call((*ta).ep_cap_path.capPtr,tag);
-		printf("%d \n",seL4_MsgMaxLength * sizeof(int) );
 		// assert(seL4_MessageInfo_get_length(tag) == 1);
 	    msg = seL4_GetMR(0);
 	    printf("returned value is %d \n",msg );	

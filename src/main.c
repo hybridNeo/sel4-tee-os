@@ -38,7 +38,8 @@ int main(void)
     trusted_app_t new_app;
     init_ta(&new_app,&vka,&vspace,APP_IMAGE_NAME);
     start_ta(&new_app,&vka,&ta_vspace,APP_IMAGE_NAME);
-    call_function(&new_app,6,HELLO_TA_INCREMENT);
+    char arr[51] = "This is a sample text \0";
+    call_function(&new_app,6,HELLO_TA_INCREMENT,arr,sizeof(char) * 50);
     //Only single function call works
     //call_function(&new_app,5,HELLO_TA_INCREMENT);
   
