@@ -20,6 +20,11 @@
 #include <sel4utils/mapping.h>
 #include <sel4utils/process.h>
 
+
+/*
+ *
+ * Message tail content either END OR LEFT implying if the message is complete or more calls are awaiting 
+ */
 #define MSG_END 1
 #define MSG_LEFT 0
 /*
