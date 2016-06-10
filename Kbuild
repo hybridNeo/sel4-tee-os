@@ -28,6 +28,7 @@ endif
 
 # add the companion app as a component so that we can elf load it
 tee-os-components-y += hello-4-app
+tee-os-components-y += client-os
 tee-os-components = $(addprefix $(STAGE_BASE)/bin/, $(tee-os-components-y))
 
 tee-os: export COMPONENTS=${tee-os-components}

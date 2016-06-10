@@ -4,6 +4,7 @@
  */
 #include "tee.h"
 #include "ta.h"
+#include "client_controller.h"
 #include "helper.h"
 
 /* constants */
@@ -12,7 +13,14 @@
 #define HELLO_TA_INCREMENT 1
 
 
-
+/*
+ *                  boot   -----   process
+ *                 /                    \
+ *              RICH OS               RICH-syscall interface       
+ *                                         |
+ *                                         TA   
+ *
+ */
 
 int main(void)
 {
@@ -25,10 +33,16 @@ int main(void)
     init_tee(&simple,info);
 
     get_allocators(allocman,&vspace,&vka,&simple,info);
-    //new vspace
+
+    //start client os
+    vspace_t client_vspace;
+    error = get_new_vspace(&client_vspace,&vka,&simple);
+    start_rich_os(&vka,&vspace);
+
+    //
+    //start ta
     vspace_t ta_vspace;
     error = get_new_vspace(&ta_vspace,&vka,&simple);
-    //
     trusted_app_t new_app;
     init_ta(&new_app,&vka,&vspace,APP_IMAGE_NAME);
     start_ta(&new_app,&vka,&ta_vspace,APP_IMAGE_NAME);
