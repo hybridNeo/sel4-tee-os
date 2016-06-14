@@ -3,3 +3,6 @@ Secure Trusted Execution Environment built on top of seL4 microkernel.
 
 For API and sample app visit
 https://github.com/hybridNeo/sel4-tee-os-sample-app
+
+For client-os and client libraries visit
+https://github.com/hybridNeo/sel4-client-os
