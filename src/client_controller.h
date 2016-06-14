@@ -21,4 +21,4 @@
 #define CLIENT_NAME "client-os"
 #define CLIENT_EP 0x77
 #define APP_PRIORITY seL4_MaxPrio
-int start_rich_os(vka_t *vka,vspace_t *vspace);
+int start_rich_os(sel4utils_process_t *client_proc,vka_t *vka,vspace_t *vspace);

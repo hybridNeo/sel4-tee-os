@@ -16,4 +16,7 @@
 #include <sel4utils/process.h>
 #define EP_BADGE 0x61 
 
-int get_new_vspace(vspace_t *vspace,vka_t *vka,simple_t *simple);
+int get_new_vspace(allocman_t *allocman,vspace_t *cur_vspace,vspace_t *vspace,vka_t *vka,simple_t *simple);
+#define ALLOCATOR_VIRTUAL_POOL_SIZE ((1 << seL4_PageBits) * 100)
+
+#define ALLOCATOR_STATIC_POOL_SIZE ((1 << seL4_PageBits) * 10)
