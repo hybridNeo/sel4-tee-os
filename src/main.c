@@ -40,7 +40,9 @@ int main(void)
      // vspace_t client_vspace;
     // error = get_new_vspace(&vspace,&client_vspace,&vka,&simple);
     sel4utils_process_t client_proc;
-    start_rich_os(&client_proc,&vka,&vspace);
+    cspacepath_t ep_cap_path;
+    start_rich_os(&client_proc,&vka,&vspace,&ep_cap_path);
+    send_msg(&client_proc,&ep_cap_path);
     //
     //start ta
     // vspace_t ta_vspace;
