@@ -42,7 +42,13 @@ int main(void)
     sel4utils_process_t client_proc;
     cspacepath_t ep_cap_path;
     start_rich_os(&client_proc,&vka,&vspace,&ep_cap_path);
-    send_msg(&client_proc,&ep_cap_path);
+    seL4_Word sender_badge;
+    seL4_Word msg;
+    printf("receiver...........\n");
+    seL4_Recv(ep_cap_path.capPtr,&sender_badge);
+    msg = seL4_GetMR(0);
+    printf("msg  : %d \n", msg );
+    // send_msg(&client_proc,&ep_cap_path);
     //
     //start ta
     // vspace_t ta_vspace;
@@ -53,7 +59,9 @@ int main(void)
     start_ta(&new_app,&vka,&vspace,APP_IMAGE_NAME);
     char arr[51] = "This is a sample text 0\0";
     call_function(&new_app,6,HELLO_TA_INCREMENT,arr,sizeof(char) * 50);
-   
+    while(1){
+
+    }
 
     // vspace_t ta2_vspace;
     // error = get_new_vspace(&ta2_vspace,&vka,&simple);
