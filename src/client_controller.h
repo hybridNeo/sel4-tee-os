@@ -23,3 +23,4 @@
 #define APP_PRIORITY seL4_MaxPrio
 int start_rich_os(sel4utils_process_t *client_proc,vka_t *vka,vspace_t *vspace,cspacepath_t *ep_cap_path);
 int send_msg(sel4utils_process_t *client_proc,cspacepath_t *ep_cap_path);
+void listener();

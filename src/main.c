@@ -43,11 +43,14 @@ int main(void)
     cspacepath_t ep_cap_path;
     start_rich_os(&client_proc,&vka,&vspace,&ep_cap_path);
     seL4_Word sender_badge;
+    seL4_MessageInfo_t tag;
     seL4_Word msg;
     printf("receiver...........\n");
-    seL4_Recv(ep_cap_path.capPtr,&sender_badge);
+    tag = seL4_Recv(ep_cap_path.capPtr,&sender_badge);
     msg = seL4_GetMR(0);
     printf("msg  : %d \n", msg );
+    seL4_SetMR(0,1);
+    seL4_Reply(tag);
     // send_msg(&client_proc,&ep_cap_path);
     //
     //start ta

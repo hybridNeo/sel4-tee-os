@@ -34,3 +34,6 @@ int send_msg(sel4utils_process_t *client_proc,cspacepath_t *ep_cap_path){
 	printf("tee-container: got msg %d \n", msg);
 	return 1;
 }
+void listener(){
+	
+}
