@@ -2,25 +2,15 @@
  *  @Author : Rahul Mahadev (hybridNeo)
  *  
  */
-#include <stdio.h>
-#include <autoconf.h>
-#include <stdio.h>
-#include <assert.h>
-#include <sel4/sel4.h>
-#include <simple/simple.h>
-#include <simple-default/simple-default.h>
-#include <vka/object.h>
-#include <allocman/allocman.h>
-#include <allocman/bootstrap.h>
-#include <allocman/vka.h>
-#include <vspace/vspace.h>
-#include <string.h>
-#include <sel4utils/vspace.h>
-#include <sel4utils/mapping.h>
-#include <sel4utils/process.h>	
+
+#include <string.h>	
+#include "ta.h"
 #define CLIENT_NAME "client-os"
-#define CLIENT_EP 0x77
+#define CLIENT_OS_EP 0x77
 #define APP_PRIORITY seL4_MaxPrio
+#define HELLO_TA_INCREMENT 1
+#define START_TA_CMD 1001
+#define CALL_FUNC_CMD 1002
 int start_rich_os(sel4utils_process_t *client_proc,vka_t *vka,vspace_t *vspace,cspacepath_t *ep_cap_path);
 int send_msg(sel4utils_process_t *client_proc,cspacepath_t *ep_cap_path);
-void listener();
+void listener(cspacepath_t *ep_cap_path,vka_t *vka,vspace_t *vspace,sel4utils_process_t *client_proc);

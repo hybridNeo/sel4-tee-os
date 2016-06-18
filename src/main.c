@@ -3,14 +3,13 @@
  *  Starting point for tee-os
  */
 #include "tee.h"
-#include "ta.h"
 #include "client_controller.h"
 #include "helper.h"
 
 /* constants */
 #define APP_PRIORITY seL4_MaxPrio
 #define APP_IMAGE_NAME "hello-4-app"
-#define HELLO_TA_INCREMENT 1
+
 
 
 /*
@@ -34,7 +33,7 @@ int main(void)
     init_tee(&simple,info);
 
     get_allocators(allocman,&vspace,&vka,&simple,info);
-
+    printf("tee-container: Starting rich OS\n");
     //start client os
     // 
      // vspace_t client_vspace;
@@ -42,26 +41,14 @@ int main(void)
     sel4utils_process_t client_proc;
     cspacepath_t ep_cap_path;
     start_rich_os(&client_proc,&vka,&vspace,&ep_cap_path);
-    seL4_Word sender_badge;
-    seL4_MessageInfo_t tag;
-    seL4_Word msg;
-    printf("receiver...........\n");
-    tag = seL4_Recv(ep_cap_path.capPtr,&sender_badge);
-    msg = seL4_GetMR(0);
-    printf("msg  : %d \n", msg );
-    seL4_SetMR(0,1);
-    seL4_Reply(tag);
+    listener(&ep_cap_path,&vka,&vspace,&client_proc);
     // send_msg(&client_proc,&ep_cap_path);
     //
     //start ta
     // vspace_t ta_vspace;
 
     // error = get_new_vspace(allocman,&vspace,&ta_vspace,&vka,&simple);
-    trusted_app_t new_app;
-    init_ta(&new_app,&vka,&vspace,APP_IMAGE_NAME);
-    start_ta(&new_app,&vka,&vspace,APP_IMAGE_NAME);
-    char arr[51] = "This is a sample text 0\0";
-    call_function(&new_app,6,HELLO_TA_INCREMENT,arr,sizeof(char) * 50);
+   
     while(1){
 
     }

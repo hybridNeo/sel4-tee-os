@@ -65,6 +65,7 @@ void call_function(trusted_app_t *ta,int param,int function,void *data,size_t ob
 		// assert(seL4_MessageInfo_get_length(tag) == 1);
 	    msg = seL4_GetMR(0);
 	    printf("returned value is %d \n",msg );	
+	    
 	    // int length = seL4_GetMR(1);
 	    // for(int i =0 ; i < length; ++i){
 	    // 	printf("%d \n",seL4_GetMR(2+i) );
