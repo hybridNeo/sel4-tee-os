@@ -82,8 +82,9 @@ void listener(cspacepath_t *ep_cap_path,vka_t *vka,vspace_t *vspace,sel4utils_pr
 				//throw err
 			}else{
 				char arr[51] = "This is a sample text 0\0";
-				printf("here here far\n");
-				call_function(&ta_app_list[ta_num],6,HELLO_TA_INCREMENT,arr,sizeof(char) * 50);
+				int func_id = seL4_GetMR(2);
+				int simple_arg = seL4_GetMR(3);
+				call_function(&ta_app_list[ta_num],simple_arg,func_id,arr,sizeof(char) * 50);
 			}
 		}
 
