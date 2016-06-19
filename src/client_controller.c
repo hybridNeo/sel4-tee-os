@@ -52,9 +52,6 @@ void listener(cspacepath_t *ep_cap_path,vka_t *vka,vspace_t *vspace,sel4utils_pr
 		seL4_Word msg;
 		tag = seL4_Recv(ep_cap_path->capPtr,&sender_badge);
 		msg = seL4_GetMR(0);
-		printf("msg  : %d \n", msg );
-	   	
-		
 		if(msg == START_TA_CMD){
 			// printf("tee-container: starting ta \n");
 			int arg_len = seL4_GetMR(1);
@@ -81,10 +78,20 @@ void listener(cspacepath_t *ep_cap_path,vka_t *vka,vspace_t *vspace,sel4utils_pr
 			if(ta_num > ta_count || ta_num < 0){
 				//throw err
 			}else{
-				char arr[51] = "This is a sample text 0\0";
 				int func_id = seL4_GetMR(2);
 				int simple_arg = seL4_GetMR(3);
-				call_function(&ta_app_list[ta_num],simple_arg,func_id,arr,sizeof(char) * 50);
+				int length_var = seL4_GetMR(4);
+				seL4_Word dat_arr[length_var];
+				for (int i = 0; i < length_var; ++i){
+					dat_arr[i] = seL4_GetMR(i+5);
+				}
+				seL4_Word res_obj[length_var];
+				int result = call_function(&ta_app_list[ta_num],simple_arg,func_id,dat_arr,sizeof(seL4_Word) * length_var,res_obj);
+				seL4_SetMR(0,result);
+				seL4_SetMR(1,length_var);
+				for (int i = 0; i < length_var; ++i){
+					seL4_SetMR(i+2,res_obj[i]);
+				}
 			}
 		}
 

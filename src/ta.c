@@ -21,19 +21,19 @@ void init_ta(trusted_app_t *ta,vka_t *vka,vspace_t *vspace,char *app_name){
 	error = sel4utils_configure_process(&((*ta).proc_obj),vka,vspace,APP_PRIORITY,app_name);
 	assert(error == 0);
 	name_thread((*ta).proc_obj.thread.tcb.cptr,app_name);
-    error = vka_alloc_endpoint(vka, &((*ta).ep_object));
-    assert(error == 0);
+	error = vka_alloc_endpoint(vka, &((*ta).ep_object));
+	assert(error == 0);
 	// printf("In ta.c code blah %d \n",(*ta).ep_id);
 	seL4_CPtr new_ep_cap;
-    vka_cspace_make_path(vka,(*ta).ep_object.cptr,&((*ta).ep_cap_path));
-    new_ep_cap = sel4utils_mint_cap_to_process(&((*ta).proc_obj),(*ta).ep_cap_path,seL4_AllRights,seL4_CapData_Badge_new((*ta).ep_id));
-    assert(new_ep_cap != 0);
+	vka_cspace_make_path(vka,(*ta).ep_object.cptr,&((*ta).ep_cap_path));
+	new_ep_cap = sel4utils_mint_cap_to_process(&((*ta).proc_obj),(*ta).ep_cap_path,seL4_AllRights,seL4_CapData_Badge_new((*ta).ep_id));
+	assert(new_ep_cap != 0);
 }
 
 void start_ta(trusted_app_t *ta,vka_t *vka,vspace_t *vspace,char *app_name){
 	UNUSED int error;
 	error = sel4utils_spawn_process_v(&((*ta).proc_obj),vka,vspace,0,NULL,1);
-    assert(error == 0);
+	assert(error == 0);
 }
 
 /*
@@ -44,35 +44,35 @@ void start_ta(trusted_app_t *ta,vka_t *vka,vspace_t *vspace,char *app_name){
  * 	reg 4-maxLength - buffer
  *	Single call only
  */
-void call_function(trusted_app_t *ta,int param,int function,void *data,size_t obj_size){
-    int length = obj_size/(double)sizeof(seL4_Word);
-    if((length+3) > seL4_MsgMaxLength){
-    	printf("Params too large. operation failed\n");
-    }else{
-    	seL4_MessageInfo_t tag;
-	    seL4_Word msg;
-	    tag = seL4_MessageInfo_new(0, 0, 0, 3+length);
+int call_function(trusted_app_t *ta,int param,int function,void *data,size_t obj_size,seL4_Word *res_obj){
+	int length = obj_size/(double)sizeof(seL4_Word);
+	if((length+3) > seL4_MsgMaxLength){
+		printf("Params too large. operation failed\n");
+		return -1;
+	}else{
+		seL4_MessageInfo_t tag;
+		seL4_Word msg;
+		tag = seL4_MessageInfo_new(0, 0, 0, 3+length);
 	   	seL4_Word* blockptr = (seL4_Word*)data;
-	    seL4_SetMR(0, param);
-	    seL4_SetMR(1,function);
-	    seL4_SetMR(2,length);
-	    for(int i =0 ; i < length;++i){
-	    	seL4_SetMR(i+3,*blockptr);
-	    	blockptr++;
-	    }
-	    // seL4_SetMR(length+3,MSG_END);
-	    seL4_Call((*ta).ep_cap_path.capPtr,tag);
+		seL4_SetMR(0, param);
+		seL4_SetMR(1,function);
+		seL4_SetMR(2,length);
+		for(int i =0 ; i < length;++i){
+			seL4_SetMR(i+3,*blockptr);
+			blockptr++;
+		}
+		// seL4_SetMR(length+3,MSG_END);
+		seL4_Call((*ta).ep_cap_path.capPtr,tag);
 		// assert(seL4_MessageInfo_get_length(tag) == 1);
-	    msg = seL4_GetMR(0);
-	    printf("returned value is %d \n",msg );	
-	    
-	    // int length = seL4_GetMR(1);
-	    // for(int i =0 ; i < length; ++i){
-	    // 	printf("%d \n",seL4_GetMR(2+i) );
-	    // }
+		msg = seL4_GetMR(0);
+		int len = seL4_GetMR(1);
+		for (int i = 0; i < len; ++i){
+			res_obj[i] =  seL4_GetMR(i+2);
+		}
+		return msg;
 	}
 
-    
+	
 
 }
 
