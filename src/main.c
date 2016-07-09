@@ -5,7 +5,6 @@
 #include "tee.h"
 #include "client_controller.h"
 #include "helper.h"
-#include "aes.h"
 /* constants */
 #define APP_PRIORITY seL4_MaxPrio
 #define APP_IMAGE_NAME "hello-4-app"
@@ -29,7 +28,6 @@ int main(void)
 	allocman_t *allocman = NULL;
 	vspace_t vspace;
 	seL4_BootInfo *info = seL4_GetBootInfo();
-
 	init_tee(&simple,info);
 
 	get_allocators(allocman,&vspace,&vka,&simple,info);
